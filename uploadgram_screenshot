@@ -53,6 +53,8 @@ else
 		echo "# upload/copy/save [DIR with prefixes eventually]"
 		echo "DEFAULT_ACTION=upload"
 	) > "$HOME/.config/uploadgram_screenshot.conf"
+	echo 'A configuration file has been created under'
+	echo "$HOME/.config/uploadgram_screenshot.conf"
 fi
 [ -z "$1" ] && ACTION="$DEFAULT_ACTION" || ACTION="$@"
 if ! ([[ "$ACTION" == "upload" ]] || [[ "$ACTION" == "copy" ]] || [[ "$ACTION" = "save "* ]]); then
