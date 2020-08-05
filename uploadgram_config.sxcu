@@ -1,0 +1,11 @@
+{
+  "Version": "13.1.0",
+  "DestinationType": "ImageUploader, FileUploader",
+  "RequestMethod": "POST",
+  "RequestURL": "https://uploadgram.me/upload",
+  "Body": "MultipartFormData",
+  "FileFormName": "file_upload",
+  "URL": "$json:url$",
+  "ThumbnailURL": "$json:url$?raw",
+  "DeletionURL": "https://uploadgram.me/delete/$json:delete$"
+}

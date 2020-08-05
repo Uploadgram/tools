@@ -1,0 +1,110 @@
+#!/bin/bash
+deps="scrot/deepin-screenshot/escrotum/maim curl wc/du awk jq notify-send xclip"
+if [[ "$1" == "-h" ]] || [[ "$1" == "--help" ]] || [[ "$1" == "help" ]] || [[ "$1" == "h" ]]; then
+	echo "================================================="
+	echo "Official Uploadgram Screenshot Tool for Linux"
+	echo "Written by Pato05 in bash, using scrot."
+	echo "================================================="
+	echo ""
+	echo "Usage: $0 [action]"
+	echo 'Valid actions: upload/copy/save [DIR]'
+	echo ''
+	echo 'After you open this script a configuration file will be created under ~/.config/uploadgram_screenshot.conf'
+	exit 1
+fi
+inst=""
+IFS=" "
+for i in $deps; do
+    IFS="/"
+    orig=""
+    for alt in $i; do
+		IFS=""
+    	dir="$(which "$alt" 2>/dev/null)"
+    	err=$?
+    	[ -z "$orig" ] && orig="$alt"
+    	if [[ "$err" == "0" ]]; then
+			eval "${orig/-/}=${dir}"
+			break
+    	fi
+    done
+    if [[ "$err" != "0" ]]; then
+		[ -z "$inst" ] && echo 'Missing dependencies:'
+		inst="missing"
+		echo "- $i"
+	fi
+done
+if [[ "$inst" != "" ]]; then
+    echo "Please install these packages (or one of the alternatives) to use this script."
+    exit 1
+fi
+RAWLINK=false
+DEFAULT_ACTION=upload
+if [[ -f "$HOME/.config/uploadgram_screenshot.conf" ]]; then
+    source "$HOME/.config/uploadgram_screenshot.conf"
+else
+	(
+		echo "# Specify here if you want the raw image link to be copied to the clipboard (defaults to false)"
+		echo "RAWLINK=false"
+		echo ""
+		echo "# Specify here the default action to make after the screenshot is made"
+		echo "# (You can specify one as a script argument)"
+		echo "# Defaults to upload"
+		echo "# This option gets replaced by the other arguments."
+		echo "# upload/copy/save [DIR with prefixes eventually]"
+		echo "DEFAULT_ACTION=upload"
+	) > "$HOME/.config/uploadgram_screenshot.conf"
+fi
+[ -z "$1" ] && ACTION="$DEFAULT_ACTION" || ACTION="$@"
+if ! ([[ "$ACTION" == "upload" ]] || [[ "$ACTION" == "copy" ]] || [[ "$ACTION" = "save "* ]]); then
+	ACTION="$DEFAULT_ACTION"
+fi
+ssname="/tmp/uploadgram-$RANDOM$RANDOM$RANDOM$RANDOM.png"
+case "$(basename "$scrot")" in
+	"scrot") args="-fs";;
+	"deepin-screenshot") args="-ns";;
+	*) args="-s";;
+esac
+"${scrot}" $args "${ssname}"
+if ! [ -f "$ssname" ]; then
+	echo 'Aborted.'
+	exit 1
+fi
+case "$ACTION" in
+	upload)
+		"${notifysend}" -u low --app-name "Uploadgram Screenshot" "Uploading screenshot..."
+		case "$(basename "$wc")" in
+			wc) size="$(${wc} -c "$ssname" | "${awk}" '{ print $1 }')"
+			du) size="$(${wc} -s "$ssname" | "${awk}" '{ print $0 }')"
+		esac
+		RESP="$(${curl} -F "file_size=$size" -F "file_upload=@$ssname" "http://uploadgram.me:4000/upload")"
+		if [ "$?" != "0" ]; then
+		    "${notifysend}" -u critical --app-name "Uploadgram Screenshot" "Screenshot upload failed."
+		fi
+		if [ "$(echo "$RESP" | jq -r ".ok")" = "true" ]; then
+		    "${notifysend}" -u normal --app-name "Uploadgram Screenshot" "The screenshot link has been copied to your clipboard!"
+		    ( echo -n "$(echo "$RESP" | ${jq} -r ".url")"; test "$RAWLINK" = "true" && echo -n "?raw" ) | "${xclip}" -sel clipboard
+		    echo "$RESP" >> "$HOME/.uploadgram_files"
+		else
+		    echo "Upload failed."
+		    echo "$RESP"
+		fi
+	;;
+	copy)
+		"${xclip}" -sel clipboard -t image/png -i "$ssname"
+		"${notifysend}" -u normal --app-name "Uploadgram Screenshot" "The screenshot has been copied to your clipboard"
+	;;
+	"save "*)
+		IFS=' '
+		read -ra split <<< "$ACTION"
+		path="${split[@]:1}"
+		if [[ "${path:-1}" != "/" ]]; then
+		    [ -d "$path" ] && path="${path}/" || newname="$path$RANDOM$RANDOM$RANDOM$RANDOM.png" 	
+		fi
+		if [ -z "$newname" ]; then
+			newname="${path}uploadgram-$RANDOM$RANDOM$RANDOM$RANDOM.png"
+		fi
+		cp "$ssname" "$newname"
+		"${notifysend}" -u normal --app-name "Uploadgram Screenshot" "Screenshot saved successfully as $newname"
+	;;
+esac
+rm -f "$ssname"
