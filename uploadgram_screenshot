@@ -61,12 +61,12 @@ if ! ([[ "$ACTION" == "upload" ]] || [[ "$ACTION" == "copy" ]] || [[ "$ACTION" =
 	ACTION="$DEFAULT_ACTION"
 fi
 ssname="/tmp/uploadgram-$RANDOM$RANDOM$RANDOM$RANDOM.png"
-case "$(basename "$scrot")" in
+case "$(basename "${deepinscreenshot}")" in
 	"scrot") args="-fs";;
 	"deepin-screenshot") args="-ns";;
 	*) args="-s";;
 esac
-"${scrot}" $args "${ssname}"
+"${deepinscreenshot}" $args "${ssname}"
 if ! [ -f "$ssname" ]; then
 	echo 'Aborted.'
 	exit 1
