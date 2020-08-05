@@ -1,5 +1,5 @@
 #!/bin/bash
-deps="scrot/deepin-screenshot/escrotum/maim curl wc/du awk jq notify-send xclip"
+deps="deepin-screenshot/escrotum/maim/scrot curl wc/du awk jq notify-send xclip"
 if [[ "$1" == "-h" ]] || [[ "$1" == "--help" ]] || [[ "$1" == "help" ]] || [[ "$1" == "h" ]]; then
 	echo "================================================="
 	echo "Official Uploadgram Screenshot Tool for Linux"
