@@ -73,8 +73,8 @@ case "$ACTION" in
 	upload)
 		"${notifysend}" -u low --app-name "Uploadgram Screenshot" "Uploading screenshot..."
 		case "$(basename "$wc")" in
-			wc) size="$(${wc} -c "$ssname" | "${awk}" '{ print $1 }')"
-			du) size="$(${wc} -s "$ssname" | "${awk}" '{ print $0 }')"
+			wc) size="$(${wc} -c "$ssname" | "${awk}" '{ print $1 }')";;
+			du) size="$(${wc} -s "$ssname" | "${awk}" '{ print $0 }')";;
 		esac
 		RESP="$(${curl} -F "file_size=$size" -F "file_upload=@$ssname" "http://uploadgram.me:4000/upload")"
 		if [ "$?" != "0" ]; then
