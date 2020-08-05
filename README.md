@@ -19,7 +19,7 @@ curl -O https://raw.githubusercontent.com/Pato05/uploadgram-tools/master/uploadg
 ```
 But let's suppose you want to install it for the whole system (which is a common use case)
 ```bash
-curl -s https://raw.githubusercontent.com/Pato05/uploadgram-tools/master/uploadgram_screenshot | sudo cat > /usr/bin/uploadgram_screenshot
+curl -s https://raw.githubusercontent.com/Pato05/uploadgram-tools/master/uploadgram_screenshot | sudo tee /usr/bin/uploadgram_screenshot > /dev/null
 ```
 
 ### How to setup the tool for easy access
