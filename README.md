@@ -15,11 +15,11 @@ Some simple tools to interface with Uploadgram's API
 ### How to download uploadgram_screenshot
 You can make a simple download by using
 ```bash
-curl -O https://raw.githubusercontent.com/Pato05/uploadgram-tools/master/uploadgram_screenshot
+curl -O https://raw.githubusercontent.com/Pato05/uploadgram-tools/master/uploadgram_screenshot && chmod +x uploadgram_screenshot
 ```
 But let's suppose you want to install it for the whole system (which is a common use case)
 ```bash
-curl -s https://raw.githubusercontent.com/Pato05/uploadgram-tools/master/uploadgram_screenshot | sudo tee /usr/bin/uploadgram_screenshot > /dev/null
+curl -s https://raw.githubusercontent.com/Pato05/uploadgram-tools/master/uploadgram_screenshot | sudo bash -c 'cat > /usr/bin/uploadgram_screenshot && chmod +x /usr/bin/uploadgram_screenshot'
 ```
 
 ### How to setup the tool for easy access
