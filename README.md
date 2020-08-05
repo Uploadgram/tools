@@ -1,2 +1,6 @@
 # uploadgram-tools
 Some simple tools to interface with Uploadgram's API
+
+### What you can find here
+- [uploadgram_config.sxcu](https://github.com/Pato05/uploadgram-tools/blob/master/uploadgram_config.sxcu) — The simple configuration file for [ShareX](https://getsharex.com/) which could already be downloaded from [there](https://uploadgram.me/uploadgram_config.sxcu)
+- [uploadgram_screenshot](https://github.com/Pato05/uploadgram-tools/blob/master/uploadgram_screenshot) — A simple bash script to make screenshots by using tools such as scrot, then upload it, copy it or save in a specific directory
