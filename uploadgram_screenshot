@@ -83,7 +83,7 @@ case "$ACTION" in
             "wc") size="$(${wc} -c "$ssname" | "${awk}" '{ print $1 }')";;
             "du") size="$(${wc} -s "$ssname" | "${awk}" '{ print $0 }')";;
         esac
-        RESP="$(${curl} -F "file_size=$size" -F "file_upload=@$ssname" "http://uploadgram.me:4000/upload")"
+        RESP="$(${curl} -F "file_size=$size" -F "file_upload=@$ssname" "https://api.uploadgram.me/upload")"
         if [ "$?" != "0" ]; then
             "${notifysend}" -u critical --app-name "Uploadgram Screenshot" "Screenshot upload failed."
         fi
